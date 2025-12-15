@@ -27,7 +27,7 @@ A fast, free, and unlimited YouTube video and audio downloader built with Node.j
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/youtube-downloader.git
+git clone https://github.com/richky0/ytdownloader.git
 cd youtube-downloader
 ```
 
