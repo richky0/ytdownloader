@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /download-proses  # Jika ada halaman proses internal
+Sitemap: https://gettube.site/sitemap.xml

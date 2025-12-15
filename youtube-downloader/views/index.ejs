@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="description" content="Download YouTube videos in HD, 4K, MP3 with our fast, free service. No registration required - save videos directly to your device.">
+    <title>Fast YouTube Video Downloader | HD & 4K Quality</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --dark: #1e293b;
+            --darker: #0f172a;
+            --safe-area-inset-top: env(safe-area-inset-top);
+            --safe-area-inset-bottom: env(safe-area-inset-bottom);
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--darker);
+            color: #f8fafc;
+            padding-top: var(--safe-area-inset-top);
+            padding-bottom: var(--safe-area-inset-bottom);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        body.light-mode {
+            background-color: #f1f5f9;
+            color: #1e293b;
+            --dark: #e2e8f0;
+            --darker: #cbd5e1;
+        }
+
+        .light-mode .gradient-bg {
+            background: linear-gradient(135deg, #e2e8f0 0%, #f1f5f9 100%);
+        }
+
+        .light-mode .card {
+            background: rgba(226, 232, 240, 0.7);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .light-mode .download-option {
+            background: rgba(226, 232, 240, 0.7);
+            color: #1e293b;
+        }
+
+        .light-mode .download-option:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .light-mode .text-slate-400 {
+            color: #64748b;
+        }
+
+        .light-mode .bg-slate-800\/30 {
+            background-color: rgba(226, 232, 240, 0.7);
+        }
+
+        .light-mode .border-slate-700 {
+            border-color: #cbd5e1;
+        }
+
+        .light-mode .text-white {
+            color: #1e293b;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            min-height: calc(100vh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom));
+            transition: background 0.3s ease;
+        }
+        
+        .card {
+            backdrop-filter: blur(10px);
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .download-option {
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+        }
+        
+        .download-option:hover {
+            transform: translateY(-2px);
+            border-left-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+        
+        .tab-button {
+            transition: all 0.2s ease;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+        
+        .tab-button.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        .light-mode .spinner {
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-top-color: var(--primary);
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Modern entrance animations */
+        @keyframes floatIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeScaleIn {
+            0% { opacity: 0; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        .animate-float {
+            animation: floatIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        
+        .animate-fade-scale {
+            animation: fadeScaleIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        
+        .delay-100 {
+            animation-delay: 100ms;
+        }
+        
+        .delay-200 {
+            animation-delay: 200ms;
+        }
+        
+        .delay-300 {
+            animation-delay: 300ms;
+        }
+
+        /* Feature highlight animation */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+        }
+        
+        .feature-highlight {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Smooth gradient transition */
+        .gradient-transition {
+            background-size: 200% 200%;
+            animation: gradientBG 15s ease infinite;
+        }
+        
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Modal styles */
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+            background-color: rgba(0, 0, 0, 0.8);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .light-mode .modal {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            width: 100%;
+            max-width: 56rem;
+            max-height: 90vh;
+            overflow-y: auto;
+            background-color: #1e293b;
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            transform: scale(0.95);
+            transition: all 0.3s ease;
+        }
+
+        .light-mode .modal-content {
+            background-color: #f8fafc;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        /* Language dropdown styles */
+        .language-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .language-dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #1e293b;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .light-mode .language-dropdown-content {
+            background-color: #f8fafc;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .language-dropdown-content a {
+            color: #f8fafc;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s ease;
+        }
+
+        .light-mode .language-dropdown-content a {
+            color: #1e293b;
+        }
+
+        .language-dropdown-content a:hover {
+            background-color: rgba(99, 102, 241, 0.2);
+        }
+
+        .language-dropdown-content.show {
+            display: block;
+        }
+
+        .language-dropdown-close {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: none;
+            border: none;
+            color: #f8fafc;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .light-mode .language-dropdown-close {
+            color: #1e293b;
+        }
+
+        /* Theme toggle button */
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: #f8fafc;
+            cursor: pointer;
+            font-size: 1.25rem;
+            transition: transform 0.3s ease;
+        }
+
+        .light-mode .theme-toggle {
+            color: #1e293b;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        /* Settings button */
+        .settings-btn {
+            background: none;
+            border: none;
+            color: #f8fafc;
+            cursor: pointer;
+            font-size: 1.25rem;
+            transition: transform 0.3s ease;
+        }
+
+        .light-mode .settings-btn {
+            color: #1e293b;
+        }
+
+        .settings-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Better mobile view for video info */
+        @media (max-width: 640px) {
+            .video-info-container {
+                flex-direction: column;
+            }
+            .video-thumbnail {
+                width: 100% !important;
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="gradient-bg gradient-transition min-h-screen flex flex-col items-center py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+        <!-- Header with settings and theme toggle -->
+        <div class="w-full max-w-4xl flex justify-between items-center mb-4">
+            <div></div> <!-- Empty div for spacing -->
+            <div class="flex items-center gap-4">
+                <button class="theme-toggle" id="theme-toggle">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </button>
+                <div class="language-dropdown">
+                    <button class="settings-btn" id="language-toggle">
+                        <i class="fas fa-language"></i>
+                    </button>
+                    <div class="language-dropdown-content" id="language-dropdown">
+                        <button class="language-dropdown-close">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <a href="#" data-lang="en" class="flex items-center">
+                            <span class="flag-icon flag-icon-us mr-2"></span> English
+                        </a>
+                        <a href="#" data-lang="id" class="flex items-center">
+                            <span class="flag-icon flag-icon-id mr-2"></span> Indonesia
+                        </a>
+                        <a href="#" data-lang="zh" class="flex items-center">
+                            <span class="flag-icon flag-icon-cn mr-2"></span> 中文 (Chinese)
+                        </a>
+                        <a href="#" data-lang="ar" class="flex items-center">
+                            <span class="flag-icon flag-icon-sa mr-2"></span> العربية (Arabic)
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full max-w-4xl mx-auto">
+            <!-- Header with animated entrance -->
+            <div class="text-center mb-8 sm:mb-10 animate-float">
+                <div class="flex justify-center mb-3 sm:mb-4">
+                    <div class="w-14 sm:w-16 h-14 sm:h-16 rounded-full bg-indigo-600 flex items-center justify-center shadow-lg feature-highlight">
+                        <i class="fas fa-download text-white text-xl sm:text-2xl"></i>
+                    </div>
+                </div>
+                <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-1 sm:mb-2" data-i18n="title">YouTube Downloader</h1>
+                <p class="text-slate-400 text-sm sm:text-base max-w-md mx-auto" data-i18n="subtitle">Download videos in 4K, 1080p, 720p or extract MP3 audio - Fast, free and unlimited</p>
+            </div>
+
+            <!-- Features Section -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6 sm:mb-8">
+                <div class="bg-slate-800/30 rounded-lg p-3 text-center animate-float delay-100">
+                    <i class="fas fa-bolt text-indigo-400 text-lg mb-1"></i>
+                    <p class="text-xs sm:text-sm font-medium text-white" data-i18n="feature1">Instant Download</p>
+                </div>
+                <div class="bg-slate-800/30 rounded-lg p-3 text-center animate-float delay-200">
+                    <i class="fas fa-lock-open text-green-400 text-lg mb-1"></i>
+                    <p class="text-xs sm:text-sm font-medium text-white" data-i18n="feature2">No Registration</p>
+                </div>
+                <div class="bg-slate-800/30 rounded-lg p-3 text-center animate-float delay-300">
+                    <i class="fas fa-infinity text-purple-400 text-lg mb-1"></i>
+                    <p class="text-xs sm:text-sm font-medium text-white" data-i18n="feature3">Unlimited Downloads</p>
+                </div>
+                <div class="bg-slate-800/30 rounded-lg p-3 text-center animate-float delay-100">
+                    <i class="fas fa-shield-alt text-blue-400 text-lg mb-1"></i>
+                    <p class="text-xs sm:text-sm font-medium text-white" data-i18n="feature4">Safe & Secure</p>
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            <% if (error) { %>
+                <div class="bg-rose-900/50 border border-rose-700 rounded-xl p-3 sm:p-4 mb-4 sm:mb-6 text-rose-100 animate-fade-scale">
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        <span class="font-medium"><%= error %></span>
+                    </div>
+                </div>
+            <% } %>
+
+            <!-- Main Card with animated entrance -->
+            <div class="card rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-2xl animate-fade-scale delay-200">
+                <!-- How it works section -->
+                <div class="mb-6 text-center">
+                    <h2 class="text-lg sm:text-xl font-bold text-white mb-3" data-i18n="howItWorks">How to Download YouTube Videos</h2>
+                    <div class="flex flex-col sm:flex-row justify-center items-center gap-2 sm:gap-4 text-xs sm:text-sm text-slate-400 mb-4">
+                        <div class="flex items-center">
+                            <span class="bg-indigo-600 text-white rounded-full w-5 h-5 flex items-center justify-center mr-2">1</span>
+                            <span data-i18n="step1">Paste URL</span>
+                        </div>
+                        <i class="fas fa-arrow-right text-slate-500 hidden sm:block"></i>
+                        <div class="flex items-center">
+                            <span class="bg-indigo-600 text-white rounded-full w-5 h-5 flex items-center justify-center mr-2">2</span>
+                            <span data-i18n="step2">Choose Format</span>
+                        </div>
+                        <i class="fas fa-arrow-right text-slate-500 hidden sm:block"></i>
+                        <div class="flex items-center">
+                            <span class="bg-indigo-600 text-white rounded-full w-5 h-5 flex items-center justify-center mr-2">3</span>
+                            <span data-i18n="step3">Download</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- URL Input Form -->
+                <form id="download-form" action="/download" method="POST" class="mb-0">
+                    <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                        <div class="flex-grow">
+                            <div class="relative">
+                                <input type="text" name="url" id="url-input" 
+                                       placeholder="Paste YouTube URL here (e.g. https://youtube.com/watch?v=...)" 
+                                       class="w-full px-4 sm:px-5 py-2 sm:py-3 text-sm sm:text-base bg-slate-800/70 border border-slate-700 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-white placeholder-slate-500 transition-all duration-200 touch-target">
+                                <div class="absolute right-3 top-1/2 transform -translate-y-1/2">
+                                    <i class="fab fa-youtube text-red-500 text-lg sm:text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" id="submit-btn" class="px-4 sm:px-6 py-2 sm:py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg sm:rounded-xl transition-all duration-200 flex items-center justify-center min-w-[120px] sm:min-w-[150px] touch-target">
+                            <span id="btn-text" class="text-sm sm:text-base" data-i18n="getVideo">Get Video</span>
+                            <span id="btn-spinner" class="hidden ml-2">
+                                <div class="spinner"></div>
+                            </span>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Loading Indicator -->
+                <div id="loading-spinner" class="hidden mt-4 sm:mt-6 text-center">
+                    <div class="inline-flex items-center px-3 sm:px-4 py-1 sm:py-2 bg-slate-800/50 rounded-full text-sm sm:text-base">
+                        <div class="spinner mr-2"></div>
+                        <span class="text-slate-400" data-i18n="processing">Processing video information...</span>
+                    </div>
+                </div>
+
+                <!-- Video Info Display -->
+                <% if (videoInfo) { %>
+                    <div class="mt-6 sm:mt-8 animate-fade-scale">
+                        <div class="flex flex-col md:flex-row gap-4 sm:gap-6 items-start bg-slate-800/30 rounded-lg sm:rounded-xl p-3 sm:p-5 border border-slate-700/50 video-info-container">
+                            <img src="<%= videoInfo.videoDetails.thumbnails[videoInfo.videoDetails.thumbnails.length-1].url %>" 
+                                 alt="Video thumbnail" 
+                                 class="w-full md:w-48 rounded-lg sm:rounded-xl shadow-md aspect-video object-cover video-thumbnail">
+                            <div class="flex-1 w-full">
+                                <h2 class="text-lg sm:text-xl font-bold text-white mb-1 sm:mb-2 leading-tight"><%= videoInfo.videoDetails.title %></h2>
+                                <p class="text-slate-400 text-sm sm:text-base mb-2 sm:mb-3" data-i18n="by">By <span class="text-slate-300"><%= videoInfo.videoDetails.author.name %></span></p>
+                                
+                                <div class="flex flex-wrap gap-1 sm:gap-2 mt-2 sm:mt-4">
+                                    <span class="text-xs px-2 sm:px-3 py-1 bg-slate-700/50 rounded-full text-slate-300">
+                                        <i class="far fa-clock mr-1"></i> <%= Math.floor(videoInfo.videoDetails.lengthSeconds / 60) %>:<%= (videoInfo.videoDetails.lengthSeconds % 60).toString().padStart(2, '0') %>
+                                    </span>
+                                    <span class="text-xs px-2 sm:px-3 py-1 bg-slate-700/50 rounded-full text-slate-300">
+                                        <i class="far fa-eye mr-1"></i> <%= Number(videoInfo.videoDetails.viewCount).toLocaleString() %> <span data-i18n="views">views</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 sm:mt-6">
+                            <!-- Resolution Selection for Video -->
+                            <div class="mb-4">
+                                <h4 class="text-sm font-semibold text-white mb-2">📹 Download Video (Select Resolution):</h4>
+                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                    <% if (formats && formats.combined && formats.combined.length > 0) { %>
+                                        <% formats.combined.slice(0, 9).forEach(format => { %>
+                                            <a href="/download/video?url=<%= encodeURIComponent(videoInfo.videoDetails.video_url) %>&fmt=<%= format.itag %>" 
+                                               class="px-3 py-2 bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm rounded-lg transition-colors duration-200 text-center font-medium">
+                                                <%= format.qualityLabel %><br><small><%= format.size %></small>
+                                            </a>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <a href="/download/video?url=<%= encodeURIComponent(videoInfo.videoDetails.video_url) %>" 
+                                           class="px-3 py-2 bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm rounded-lg transition-colors duration-200 text-center font-medium">
+                                            Best Video
+                                        </a>
+                                    <% } %>
+                                </div>
+                            </div>
+
+                            <!-- Resolution Selection for Audio -->
+                            <div class="mb-4">
+                                <h4 class="text-sm font-semibold text-white mb-2">🎵 Download Audio (Select Quality):</h4>
+                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                    <% if (formats && formats.audio && formats.audio.length > 0) { %>
+                                        <% formats.audio.slice(0, 9).forEach(format => { %>
+                                            <a href="/download/audio?url=<%= encodeURIComponent(videoInfo.videoDetails.video_url) %>&fmt=<%= format.itag %>" 
+                                               class="px-3 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-xs sm:text-sm rounded-lg transition-colors duration-200 text-center font-medium">
+                                                <%= format.qualityLabel %><br><small><%= format.size %></small>
+                                            </a>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <a href="/download/audio?url=<%= encodeURIComponent(videoInfo.videoDetails.video_url) %>" 
+                                           class="px-3 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-xs sm:text-sm rounded-lg transition-colors duration-200 text-center font-medium">
+                                            Best Audio
+                                        </a>
+                                    <% } %>
+                                </div>
+                            </div>
+
+                            <!-- Show Options Modal Button -->
+                            <div class="text-center pt-2">
+                                <button id="open-modal-btn" class="px-6 sm:px-8 py-2 sm:py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg sm:rounded-xl transition-all duration-200 inline-flex items-center touch-target">
+                                    <i class="fas fa-sliders-h mr-2 text-sm sm:text-base"></i>
+                                    <span class="text-sm sm:text-base" data-i18n="showOptions">Advanced Options</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+
+            <!-- Features Details Section -->
+            <div class="mt-8 sm:mt-12 animate-float delay-300">
+                <h2 class="text-xl sm:text-2xl font-bold text-white text-center mb-6" data-i18n="whyChoose">Why Choose Our YouTube Downloader?</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-slate-800/30 rounded-xl p-5 border border-slate-700/50">
+                        <div class="flex items-start mb-3">
+                            <div class="bg-indigo-600/20 p-2 rounded-lg mr-3">
+                                <i class="fas fa-tachometer-alt text-indigo-400"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white" data-i18n="featureDetail1">Lightning Fast Downloads</h3>
+                        </div>
+                        <p class="text-slate-400 text-sm" data-i18n="featureDetailDesc1">Our optimized servers ensure your downloads complete in seconds, even for 4K videos. No waiting in queues or speed limits.</p>
+                    </div>
+                    <div class="bg-slate-800/30 rounded-xl p-5 border border-slate-700/50">
+                        <div class="flex items-start mb-3">
+                            <div class="bg-purple-600/20 p-2 rounded-lg mr-3">
+                                <i class="fas fa-film text-purple-400"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white" data-i18n="featureDetail2">Highest Quality Available</h3>
+                        </div>
+                        <p class="text-slate-400 text-sm" data-i18n="featureDetailDesc2">Download videos in their original quality including 4K, 1440p, 1080p HD, or extract audio in MP3 format up to 320kbps.</p>
+                    </div>
+                    <div class="bg-slate-800/30 rounded-xl p-5 border border-slate-700/50">
+                        <div class="flex items-start mb-3">
+                            <div class="bg-green-600/20 p-2 rounded-lg mr-3">
+                                <i class="fas fa-user-shield text-green-400"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white" data-i18n="featureDetail3">100% Private</h3>
+                        </div>
+                        <p class="text-slate-400 text-sm" data-i18n="featureDetailDesc3">We don't store your downloads or track your activity. Your privacy is our top priority with no logs kept.</p>
+                    </div>
+                    <div class="bg-slate-800/30 rounded-xl p-5 border border-slate-700/50">
+                        <div class="flex items-start mb-3">
+                            <div class="bg-blue-600/20 p-2 rounded-lg mr-3">
+                                <i class="fas fa-mobile-alt text-blue-400"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white" data-i18n="featureDetail4">Works On All Devices</h3>
+                        </div>
+                        <p class="text-slate-400 text-sm" data-i18n="featureDetailDesc4">Download directly to your phone, tablet or computer. Our service works perfectly on iOS, Android, Windows and Mac.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="mt-8 sm:mt-12 animate-float delay-400">
+                <h2 class="text-xl sm:text-2xl font-bold text-white text-center mb-6" data-i18n="faq">Frequently Asked Questions</h2>
+                <div class="space-y-4">
+                    <div class="bg-slate-800/30 rounded-xl p-5 border border-slate-700/50">
+                        <h3 class="text-lg font-semibold text-white mb-2 flex items-center justify-between cursor-pointer">
+                            <span data-i18n="faq1">Is this YouTube downloader free to use?</span>
+                            <i class="fas fa-chevron-down text-slate-400 transition-transform"></i>
+                        </h3>
+                        <p class="text-slate-400 text-sm mt-2" data-i18n="faqAnswer1">Yes, our service is completely free with no hidden charges. You can download as many videos as you want without any limitations.</p>
+                    </div>
+                    <div class="bg-slate-800/30 rounded-xl p-5 border border-slate-700/50">
+                        <h3 class="text-lg font-semibold text-white mb-2 flex items-center justify-between cursor-pointer">
+                            <span data-i18n="faq2">What video formats are available?</span>
+                            <i class="fas fa-chevron-down text-slate-400 transition-transform"></i>
+                        </h3>
+                        <p class="text-slate-400 text-sm mt-2" data-i18n="faqAnswer2">We support MP4 (video+audio), MP3 (audio only), and various quality options from 144p up to 4K when available.</p>
+                    </div>
+                    <div class="bg-slate-800/30 rounded-xl p-5 border border-slate-700/50">
+                        <h3 class="text-lg font-semibold text-white mb-2 flex items-center justify-between cursor-pointer">
+                            <span data-i18n="faq3">How do I download YouTube videos?</span>
+                            <i class="fas fa-chevron-down text-slate-400 transition-transform"></i>
+                        </h3>
+                        <p class="text-slate-400 text-sm mt-2" data-i18n="faqAnswer3">Simply paste the YouTube URL in the box above, select your preferred format, and click download. It's that easy!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Download Options Modal -->
+    <div id="download-modal" class="modal">
+        <div class="modal-content">
+            <div class="sticky top-0 z-10 bg-slate-800/90 backdrop-blur-sm p-4 sm:p-6 border-b border-slate-700/50 flex justify-between items-center">
+                <h3 class="text-xl sm:text-2xl font-bold text-white flex items-center">
+                    <i class="fas fa-download mr-2 sm:mr-3 text-indigo-500"></i>
+                    <span data-i18n="downloadOptions">Download Options</span>
+                </h3>
+                <button id="close-modal-btn" class="text-slate-400 hover:text-white transition-colors touch-target">
+                    <i class="fas fa-times text-lg sm:text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="p-4 sm:p-6">
+                <!-- Tabs Navigation -->
+                <div class="flex overflow-x-auto pb-2 mb-4 sm:mb-6 scrollbar-hide -mx-4 sm:mx-0 px-4 sm:px-0">
+                    <button data-tab="combined" class="tab-button flex-shrink-0 px-3 sm:px-4 py-1 sm:py-2 font-medium text-slate-400 hover:text-white active text-sm sm:text-base">
+                        <i class="fas fa-film mr-1 sm:mr-2"></i> <span data-i18n="videoAudio">Video + Audio</span>
+                    </button>
+                    <button data-tab="audio" class="tab-button flex-shrink-0 px-3 sm:px-4 py-1 sm:py-2 font-medium text-slate-400 hover:text-white text-sm sm:text-base">
+                        <i class="fas fa-music mr-1 sm:mr-2"></i> <span data-i18n="audioOnly">Audio Only</span>
+                    </button>
+                    <button data-tab="video" class="tab-button flex-shrink-0 px-3 sm:px-4 py-1 sm:py-2 font-medium text-slate-400 hover:text-white text-sm sm:text-base">
+                        <i class="fas fa-video mr-1 sm:mr-2"></i> <span data-i18n="videoOnly">Video Only</span>
+                    </button>
+                    <% if (formats && formats.videoHDR && formats.videoHDR.length > 0) { %>
+                    <button data-tab="hdr" class="tab-button flex-shrink-0 px-3 sm:px-4 py-1 sm:py-2 font-medium text-slate-400 hover:text-white text-sm sm:text-base">
+                        <i class="fas fa-sun mr-1 sm:mr-2"></i> <span data-i18n="hdrVideo">HDR Video</span>
+                    </button>
+                    <% } %>
+                </div>
+                
+                <!-- Tab Contents -->
+                <div class="space-y-6 sm:space-y-8">
+                    <!-- Combined Video+Audio Tab -->
+                    <div data-tab-content="combined" class="tab-content">
+                        <div class="space-y-3 sm:space-y-4">
+                            <h4 class="text-base sm:text-lg font-semibold text-white flex items-center">
+                                <i class="fas fa-film mr-1 sm:mr-2 text-indigo-400"></i>
+                                <span data-i18n="videoWithAudio">Video with Audio (MP4)</span>
+                            </h4>
+                            
+                            <% if (formats && formats.combined && formats.combined.length > 0) { %>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                                    <% formats.combined.forEach(format => { %>
+                                        <a href="/download?url=<%= encodeURIComponent(videoInfo.videoDetails.video_url) %>&itag=<%= format.itag %>"
+                                               class="download-option bg-slate-700/50 rounded-lg p-3 sm:p-4 flex justify-between items-center group touch-target">
+                                                <div>
+                                                    <div class="font-medium text-sm sm:text-base text-white group-hover:text-indigo-300"><%= format.qualityLabel %></div>
+                                                    <div class="text-xs text-slate-400 mt-0.5 sm:mt-1">MP4 • <%= format.contentLength ? (format.contentLength / (1024 * 1024)).toFixed(2) + ' MB' : 'Unknown size' %></div>
+                                                </div>
+                                                <i class="fas fa-download text-slate-500 group-hover:text-indigo-400 text-sm sm:text-base"></i>
+                                            </a>
+                                    <% }); %>
+                                </div>
+                            <% } else { %>
+                                <div class="bg-slate-800/30 rounded-lg p-3 sm:p-4 text-center text-slate-400 text-sm sm:text-base" data-i18n="noCombinedFormats">
+                                    No combined video+audio formats available
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                    
+                    <!-- Audio Only Tab -->
+                    <div data-tab-content="audio" class="tab-content hidden">
+                        <div class="space-y-3 sm:space-y-4">
+                            <h4 class="text-base sm:text-lg font-semibold text-white flex items-center">
+                                <i class="fas fa-music mr-1 sm:mr-2 text-indigo-400"></i>
+                                <span data-i18n="audioOnlyMP3">Audio Only (MP3)</span>
+                            </h4>
+                            
+                            <% if (formats && formats.audio && formats.audio.length > 0) { %>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                                    <% formats.audio.forEach(format => { %>
+                                        <a href="/download?url=<%= encodeURIComponent(videoInfo.videoDetails.video_url) %>&itag=<%= format.itag %>"
+                                           class="download-option bg-slate-700/50 rounded-lg p-3 sm:p-4 flex justify-between items-center group touch-target">
+                                            <div>
+                                                <div class="font-medium text-sm sm:text-base text-white group-hover:text-indigo-300">
+                                                    <%= format.audioBitrate ? Math.round(format.audioBitrate / 1000) : 'Unknown' %> <span data-i18n="kbpsAudio">kbps Audio</span>
+                                                </div>
+                                                <div class="text-xs text-slate-400 mt-0.5 sm:mt-1">MP3 • <%= format.contentLength ? (format.contentLength / (1024 * 1024)).toFixed(2) + ' MB' : 'Unknown size' %></div>
+                                            </div>
+                                            <i class="fas fa-download text-slate-500 group-hover:text-indigo-400 text-sm sm:text-base"></i>
+                                        </a>
+                                    <% }); %>
+                                </div>
+                            <% } else { %>
+                                <div class="bg-slate-800/30 rounded-lg p-3 sm:p-4 text-center text-slate-400 text-sm sm:text-base" data-i18n="noAudioFormats">
+                                    No audio-only formats available
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                    
+                    <!-- Video Only Tab -->
+                    <div data-tab-content="video" class="tab-content hidden">
+                        <div class="space-y-3 sm:space-y-4">
+                            <h4 class="text-base sm:text-lg font-semibold text-white flex items-center">
+                                <i class="fas fa-video mr-1 sm:mr-2 text-indigo-400"></i>
+                                <span data-i18n="videoOnlyMP4">Video Only (MP4)</span>
+                            </h4>
+                            
+                            <% if (formats && formats.video && formats.video.length > 0) { %>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                                    <% formats.video.forEach(format => { %>
+                                        <a href="/download?url=<%= encodeURIComponent(videoInfo.videoDetails.video_url) %>&itag=<%= format.itag %>"
+                                           class="download-option bg-slate-700/50 rounded-lg p-3 sm:p-4 flex justify-between items-center group touch-target">
+                                            <div>
+                                                <div class="font-medium text-sm sm:text-base text-white group-hover:text-indigo-300"><%= format.qualityLabel %></div>
+                                                <div class="text-xs text-slate-400 mt-0.5 sm:mt-1">MP4 • <%= format.contentLength ? (format.contentLength / (1024 * 1024)).toFixed(2) + ' MB' : 'Unknown size' %></div>
+                                            </div>
+                                            <i class="fas fa-download text-slate-500 group-hover:text-indigo-400 text-sm sm:text-base"></i>
+                                        </a>
+                                    <% }); %>
+                                </div>
+                            <% } else { %>
+                                <div class="bg-slate-800/30 rounded-lg p-3 sm:p-4 text-center text-slate-400 text-sm sm:text-base" data-i18n="noVideoFormats">
+                                    No video-only formats available
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                    
+                    <!-- HDR Video Tab -->
+                    <% if (formats && formats.videoHDR && formats.videoHDR.length > 0) { %>
+                    <div data-tab-content="hdr" class="tab-content hidden">
+                        <div class="space-y-3 sm:space-y-4">
+                            <h4 class="text-base sm:text-lg font-semibold text-white flex items-center">
+                                <i class="fas fa-sun mr-1 sm:mr-2 text-indigo-400"></i>
+                                <span data-i18n="hdrVideoMP4">HDR Video (MP4)</span>
+                            </h4>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                                <% formats.videoHDR.forEach(format => { %>
+                                                                        <a href="/download?url=<%= encodeURIComponent(videoInfo.videoDetails.video_url) %>&itag=<%= format.itag %>"
+                                                                             class="download-option bg-slate-700/50 rounded-lg p-3 sm:p-4 flex justify-between items-center group touch-target">
+                                                                                 <div>
+                                                                                         <div class="font-medium text-sm sm:text-base text-white group-hover:text-indigo-300"><%= format.qualityLabel %></div>
+                                                                                        <div class="text-xs text-slate-400 mt-0.5 sm:mt-1">HDR MP4 • <%= format.contentLength ? (format.contentLength / (1024 * 1024)).toFixed(2) + ' MB' : 'Unknown size' %></div>
+                                                                                 </div>
+                                                                                 <i class="fas fa-download text-slate-500 group-hover:text-indigo-400 text-sm sm:text-base"></i>
+                                                                         </a>
+                                <% }); %>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add flag icons CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
+
+    <script>
+        // DOM Elements
+        const form = document.getElementById('download-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const btnText = document.getElementById('btn-text');
+        const btnSpinner = document.getElementById('btn-spinner');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const modal = document.getElementById('download-modal');
+        const openModalBtn = document.getElementById('open-modal-btn');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const tabButtons = document.querySelectorAll('[data-tab]');
+        const tabContents = document.querySelectorAll('[data-tab-content]');
+        const faqItems = document.querySelectorAll('.bg-slate-800\\/30.rounded-xl h3');
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const languageToggle = document.getElementById('language-toggle');
+        const languageDropdown = document.getElementById('language-dropdown');
+        const languageCloseBtn = document.querySelector('.language-dropdown-close');
+        const languageLinks = document.querySelectorAll('.language-dropdown-content a');
+
+        // Language translations
+        const translations = {
+            en: {
+                title: "YouTube Downloader",
+                subtitle: "Download videos in 4K, 1080p, 720p or extract MP3 audio - Fast, free and unlimited",
+                feature1: "Instant Download",
+                feature2: "No Registration",
+                feature3: "Unlimited Downloads",
+                feature4: "Safe & Secure",
+                howItWorks: "How to Download YouTube Videos",
+                step1: "Paste URL",
+                step2: "Choose Format",
+                step3: "Download",
+                getVideo: "Get Video",
+                processing: "Processing video information...",
+                by: "By",
+                views: "views",
+                showOptions: "Show Download Options",
+                whyChoose: "Why Choose Our YouTube Downloader?",
+                featureDetail1: "Lightning Fast Downloads",
+                featureDetailDesc1: "Our optimized servers ensure your downloads complete in seconds, even for 4K videos. No waiting in queues or speed limits.",
+                featureDetail2: "Highest Quality Available",
+                featureDetailDesc2: "Download videos in their original quality including 4K, 1440p, 1080p HD, or extract audio in MP3 format up to 320kbps.",
+                featureDetail3: "100% Private",
+                featureDetailDesc3: "We don't store your downloads or track your activity. Your privacy is our top priority with no logs kept.",
+                featureDetail4: "Works On All Devices",
+                featureDetailDesc4: "Download directly to your phone, tablet or computer. Our service works perfectly on iOS, Android, Windows and Mac.",
+                faq: "Frequently Asked Questions",
+                faq1: "Is this YouTube downloader free to use?",
+                faqAnswer1: "Yes, our service is completely free with no hidden charges. You can download as many videos as you want without any limitations.",
+                faq2: "What video formats are available?",
+                faqAnswer2: "We support MP4 (video+audio), MP3 (audio only), and various quality options from 144p up to 4K when available.",
+                faq3: "How do I download YouTube videos?",
+                faqAnswer3: "Simply paste the YouTube URL in the box above, select your preferred format, and click download. It's that easy!",
+                downloadOptions: "Download Options",
+                videoAudio: "Video + Audio",
+                audioOnly: "Audio Only",
+                videoOnly: "Video Only",
+                hdrVideo: "HDR Video",
+                videoWithAudio: "Video with Audio (MP4)",
+                noCombinedFormats: "No combined video+audio formats available",
+                audioOnlyMP3: "Audio Only (MP3)",
+                kbpsAudio: "kbps Audio",
+                noAudioFormats: "No audio-only formats available",
+                videoOnlyMP4: "Video Only (MP4)",
+                noVideoFormats: "No video-only formats available",
+                hdrVideoMP4: "HDR Video (MP4)"
+            },
+            id: {
+                title: "Pengunduh YouTube",
+                subtitle: "Unduh video dalam 4K, 1080p, 720p atau ekstrak audio MP3 - Cepat, gratis, dan tanpa batas",
+                feature1: "Unduh Instan",
+                feature2: "Tanpa Registrasi",
+                feature3: "Unduhan Tak Terbatas",
+                feature4: "Aman & Terjamin",
+                howItWorks: "Cara Mengunduh Video YouTube",
+                step1: "Tempel URL",
+                step2: "Pilih Format",
+                step3: "Unduh",
+                getVideo: "Dapatkan Video",
+                processing: "Memproses informasi video...",
+                by: "Oleh",
+                views: "tayangan",
+                showOptions: "Tampilkan Opsi Unduhan",
+                whyChoose: "Mengapa Memilih Pengunduh YouTube Kami?",
+                featureDetail1: "Unduhan Super Cepat",
+                featureDetailDesc1: "Server kami yang dioptimalkan memastikan unduhan selesai dalam hitungan detik, bahkan untuk video 4K. Tanpa antrian atau batas kecepatan.",
+                featureDetail2: "Kualitas Tertinggi Tersedia",
+                featureDetailDesc2: "Unduh video dalam kualitas asli termasuk 4K, 1440p, 1080p HD, atau ekstrak audio dalam format MP3 hingga 320kbps.",
+                featureDetail3: "100% Privasi",
+                featureDetailDesc3: "Kami tidak menyimpan unduhan Anda atau melacak aktivitas Anda. Privasi Anda adalah prioritas utama kami tanpa log yang disimpan.",
+                featureDetail4: "Bekerja di Semua Perangkat",
+                featureDetailDesc4: "Unduh langsung ke ponsel, tablet, atau komputer Anda. Layanan kami bekerja sempurna di iOS, Android, Windows, dan Mac.",
+                faq: "Pertanyaan yang Sering Diajukan",
+                faq1: "Apakah pengunduh YouTube ini gratis?",
+                faqAnswer1: "Ya, layanan kami sepenuhnya gratis tanpa biaya tersembunyi. Anda dapat mengunduh banyak video yang Anda inginkan tanpa batasan apa pun.",
+                faq2: "Format video apa saja yang tersedia?",
+                faqAnswer2: "Kami mendukung MP4 (video+audio), MP3 (audio saja), dan berbagai opsi kualitas dari 144p hingga 4K jika tersedia.",
+                faq3: "Bagaimana cara mengunduh video YouTube?",
+                faqAnswer3: "Cukup tempel URL YouTube di kotak di atas, pilih format yang Anda inginkan, dan klik unduh. Sesederhana itu!",
+                downloadOptions: "Opsi Unduhan",
+                videoAudio: "Video + Audio",
+                audioOnly: "Hanya Audio",
+                videoOnly: "Hanya Video",
+                hdrVideo: "Video HDR",
+                videoWithAudio: "Video dengan Audio (MP4)",
+                noCombinedFormats: "Tidak ada format video+audio yang tersedia",
+                audioOnlyMP3: "Hanya Audio (MP3)",
+                kbpsAudio: "kbps Audio",
+                noAudioFormats: "Tidak ada format audio saja yang tersedia",
+                videoOnlyMP4: "Hanya Video (MP4)",
+                noVideoFormats: "Tidak ada format video saja yang tersedia",
+                hdrVideoMP4: "Video HDR (MP4)"
+            },
+            zh: {
+                title: "YouTube 下载器",
+                subtitle: "下载 4K、1080p、720p 视频或提取 MP3 音频 - 快速、免费且无限",
+                feature1: "即时下载",
+                feature2: "无需注册",
+                feature3: "无限下载",
+                feature4: "安全可靠",
+                howItWorks: "如何下载 YouTube 视频",
+                step1: "粘贴网址",
+                step2: "选择格式",
+                step3: "下载",
+                getVideo: "获取视频",
+                processing: "正在处理视频信息...",
+                by: "作者",
+                views: "观看次数",
+                showOptions: "显示下载选项",
+                whyChoose: "为什么选择我们的 YouTube 下载器？",
+                featureDetail1: "闪电般快速下载",
+                featureDetailDesc1: "我们优化的服务器确保您的下载在几秒钟内完成，即使是 4K 视频。无需排队或限速。",
+                featureDetail2: "提供最高质量",
+                featureDetailDesc2: "下载原始质量的视频，包括 4K、1440p、1080p HD，或以高达 320kbps 的 MP3 格式提取音频。",
+                featureDetail3: "100% 隐私保护",
+                featureDetailDesc3: "我们不存储您的下载或跟踪您的活动。您的隐私是我们的首要任务，不保留任何日志。",
+                featureDetail4: "适用于所有设备",
+                featureDetailDesc4: "直接下载到您的手机、平板电脑或计算机。我们的服务在 iOS、Android、Windows 和 Mac 上完美运行。",
+                faq: "常见问题",
+                faq1: "这个 YouTube 下载器是免费的吗？",
+                faqAnswer1: "是的，我们的服务完全免费，没有隐藏费用。您可以无限制地下载任意数量的视频。",
+                faq2: "有哪些视频格式可用？",
+                faqAnswer2: "我们支持 MP4（视频+音频）、MP3（仅音频）以及从 144p 到 4K 的各种质量选项（如果可用）。",
+                faq3: "如何下载 YouTube 视频？",
+                faqAnswer3: "只需将 YouTube 网址粘贴到上面的框中，选择您喜欢的格式，然后单击下载。就是这么简单！",
+                downloadOptions: "下载选项",
+                videoAudio: "视频 + 音频",
+                audioOnly: "仅音频",
+                videoOnly: "仅视频",
+                hdrVideo: "HDR 视频",
+                videoWithAudio: "带音频的视频 (MP4)",
+                noCombinedFormats: "没有可用的视频+音频格式",
+                audioOnlyMP3: "仅音频 (MP3)",
+                kbpsAudio: "kbps 音频",
+                noAudioFormats: "没有可用的仅音频格式",
+                videoOnlyMP4: "仅视频 (MP4)",
+                noVideoFormats: "没有可用的仅视频格式",
+                hdrVideoMP4: "HDR 视频 (MP4)"
+            },
+            ar: {
+                title: "تحميل فيديوهات يوتيوب",
+                subtitle: "قم بتنزيل مقاطع الفيديو بدقة 4K أو 1080p أو 720p أو استخراج الصوت بصيغة MP3 - سريع ومجاني وغير محدود",
+                feature1: "تحميل فوري",
+                feature2: "بدون تسجيل",
+                feature3: "تحميل غير محدود",
+                feature4: "آمن ومضمون",
+                howItWorks: "كيفية تحميل فيديوهات يوتيوب",
+                step1: "لصق الرابط",
+                step2: "اختر الصيغة",
+                step3: "تحميل",
+                getVideo: "الحصول على الفيديو",
+                processing: "جاري معالجة معلومات الفيديو...",
+                by: "بواسطة",
+                views: "مشاهدة",
+                showOptions: "عرض خيارات التحميل",
+                whyChoose: "لماذا تختار أداة تحميل يوتيوب الخاصة بنا؟",
+                featureDetail1: "تحميل سريع جداً",
+                featureDetailDesc1: "خوادمنا المخصصة تضمن اكتمال التحميل في ثوانٍ، حتى لمقاطع الفيديو بدقة 4K. بدون انتظار في طوابير أو حدود سرعة.",
+                featureDetail2: "أعلى جودة متاحة",
+                featureDetailDesc2: "قم بتنزيل مقاطع الفيديو بجودتها الأصلية بما في ذلك 4K و 1440p و 1080p HD، أو استخراج الصوت بصيغة MP3 بجودة تصل إلى 320kbps.",
+                featureDetail3: "خصوصية 100%",
+                featureDetailDesc3: "نحن لا نخزن تحميلاتك أو نتتبع نشاطك. خصوصيتك هي أولويتنا القصوى بدون حفظ أي سجلات.",
+                featureDetail4: "يعمل على جميع الأجهزة",
+                featureDetailDesc4: "قم بالتحميل مباشرة إلى هاتفك أو جهازك اللوحي أو حاسوبك. تعمل خدمتنا بشكل مثالي على iOS و Android و Windows و Mac.",
+                faq: "أسئلة شائعة",
+                faq1: "هل أداة تحميل يوتيوب هذه مجانية؟",
+                faqAnswer1: "نعم، خدمتنا مجانية تمامًا بدون أي رسوم خفية. يمكنك تحميل العديد من مقاطع الفيديو كما تريد دون أي قيود.",
+                faq2: "ما هي صيغ الفيديو المتاحة؟",
+                faqAnswer2: "نحن ندعم MP4 (فيديو+صوت)، MP3 (صوت فقط)، وخيارات جودة مختلفة من 144p حتى 4K عند التوفر.",
+                faq3: "كيف يمكنني تحميل فيديوهات يوتيوب؟",
+                faqAnswer3: "ما عليك سوى لصق رابط يوتيوب في المربع أعلاه، حدد الصيغة التي تفضلها، وانقر على تحميل. الأمر بهذه البساطة!",
+                downloadOptions: "خيارات التحميل",
+                videoAudio: "فيديو + صوت",
+                audioOnly: "صوت فقط",
+                videoOnly: "فيديو فقط",
+                hdrVideo: "فيديو HDR",
+                videoWithAudio: "فيديو مع صوت (MP4)",
+                noCombinedFormats: "لا توجد صيغ فيديو+صوت متاحة",
+                audioOnlyMP3: "صوت فقط (MP3)",
+                kbpsAudio: "كيلوبت في الثانية صوت",
+                noAudioFormats: "لا توجد صيغ صوت فقط متاحة",
+                videoOnlyMP4: "فيديو فقط (MP4)",
+                noVideoFormats: "لا توجد صيغ فيديو فقط متاحة",
+                hdrVideoMP4: "فيديو HDR (MP4)"
+            }
+        };
+
+        // Initialize theme from localStorage or prefer color scheme
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.body.classList.toggle('light-mode', savedTheme === 'light');
+                themeIcon.classList.toggle('fa-moon', savedTheme === 'dark');
+                themeIcon.classList.toggle('fa-sun', savedTheme === 'light');
+            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                document.body.classList.add('light-mode');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+                localStorage.setItem('theme', 'light');
+            } else {
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Toggle theme
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLightMode = document.body.classList.contains('light-mode');
+            themeIcon.classList.toggle('fa-moon', !isLightMode);
+            themeIcon.classList.toggle('fa-sun', isLightMode);
+            localStorage.setItem('theme', isLightMode ? 'light' : 'dark');
+        }
+
+        // Initialize language from localStorage or browser language
+        function initLanguage() {
+            const savedLang = localStorage.getItem('language') || 'en';
+            changeLanguage(savedLang);
+        }
+
+        // Change language
+        function changeLanguage(lang) {
+            const langData = translations[lang] || translations['en'];
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                }
+            });
+            localStorage.setItem('language', lang);
+            closeLanguageDropdown();
+        }
+
+        // Toggle language dropdown
+        function toggleLanguageDropdown() {
+            languageDropdown.classList.toggle('show');
+        }
+
+        // Close language dropdown
+        function closeLanguageDropdown() {
+            languageDropdown.classList.remove('show');
+        }
+
+        // Initialize the page
+        function initPage() {
+            initTheme();
+            initLanguage();
+        }
+
+        // Event listeners
+        if (themeToggle) {
+            themeToggle.addEventListener('click', toggleTheme);
+        }
+
+        // Language dropdown toggle
+        if (languageToggle) {
+            languageToggle.addEventListener('click', toggleLanguageDropdown);
+        }
+
+        // Close language dropdown when clicking X button
+        if (languageCloseBtn) {
+            languageCloseBtn.addEventListener('click', closeLanguageDropdown);
+        }
+
+        // Language selection
+        languageLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const lang = link.getAttribute('data-lang');
+                changeLanguage(lang);
+            });
+        });
+
+        // Close language dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.language-dropdown') && !e.target.closest('#language-toggle')) {
+                closeLanguageDropdown();
+            }
+        });
+
+        // Pastikan modal tertutup saat pertama kali load
+        document.addEventListener('DOMContentLoaded', () => {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
+            initPage();
+        });
+
+        // Form submission handler
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                btnText.textContent = document.querySelector('[data-i18n="processing"]').textContent;
+                btnSpinner.classList.remove('hidden');
+                submitBtn.disabled = true;
+                loadingSpinner.classList.remove('hidden');
+            });
+        }
+
+        // Modal functionality - hanya buka ketika tombol diklik
+        if (openModalBtn) {
+            openModalBtn.addEventListener('click', () => {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                document.documentElement.style.overflow = 'hidden';
+            });
+        }
+
+        if (closeModalBtn) {
+            closeModalBtn.addEventListener('click', () => {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+                document.documentElement.style.overflow = '';
+            });
+        }
+
+        // Tab switching functionality
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Update active tab button
+                tabButtons.forEach(btn => btn.classList.remove('active', 'text-indigo-400'));
+                button.classList.add('active', 'text-indigo-400');
+                
+                // Show corresponding tab content
+                const tabName = button.getAttribute('data-tab');
+                tabContents.forEach(content => {
+                    content.classList.add('hidden');
+                    if (content.getAttribute('data-tab-content') === tabName) {
+                        content.classList.remove('hidden');
+                    }
+                });
+            });
+        });
+
+        // FAQ accordion functionality
+        faqItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const answer = item.nextElementSibling;
+                const icon = item.querySelector('i');
+                
+                if (answer.style.maxHeight) {
+                    answer.style.maxHeight = null;
+                    answer.style.marginTop = '0';
+                    icon.style.transform = 'rotate(0deg)';
+                } else {
+                    answer.style.maxHeight = answer.scrollHeight + 'px';
+                    answer.style.marginTop = '0.5rem';
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            });
+        });
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+                document.documentElement.style.overflow = '';
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+                document.documentElement.style.overflow = '';
+            }
+        });
+
+        // Initialize FAQ answers
+        document.querySelectorAll('.bg-slate-800\\/30.rounded-xl p').forEach(answer => {
+            answer.style.maxHeight = '0';
+            answer.style.overflow = 'hidden';
+            answer.style.transition = 'max-height 0.3s ease, margin-top 0.3s ease';
+        });
+
+        // Better touch handling for mobile
+        document.addEventListener('touchstart', function() {}, {passive: true});
+
+        // Initialize animations when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Animate features on scroll
+            const observerOptions = {
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-float');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.bg-slate-800\\/30.rounded-xl').forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>
