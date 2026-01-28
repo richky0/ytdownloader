@@ -4,18 +4,18 @@ A fast, free, and unlimited YouTube video and audio downloader built with Node.j
 
 **Created by:** Richky Sung
 
-## ✨ Features
+##  Features
 
-- 🎬 **Download Videos** in multiple resolutions (1080p, 720p, 480p, 360p, 240p, 144p)
-- 🎵 **Extract Audio** in various bitrate qualities (130kbps, 128kbps, and more)
-- ⚡ **High-Speed Downloads** - Optimized streaming for fast downloads
-- 🎯 **Smart Format Selection** - Automatically selects best available quality
-- 📱 **Responsive UI** - Mobile-friendly dark theme interface
-- 🔄 **Automatic Fallback** - Multiple format fallback chains ensure reliability
-- 🌐 **Zero Registration** - No account needed, completely free to use
-- 📊 **Real-Time Format Information** - Shows available resolutions before download
+-  **Download Videos** in multiple resolutions (1080p, 720p, 480p, 360p, 240p, 144p)
+-  **Extract Audio** in various bitrate qualities (130kbps, 128kbps, and more)
+-  **High-Speed Downloads** - Optimized streaming for fast downloads
+-  **Smart Format Selection** - Automatically selects best available quality
+-  **Responsive UI** - Mobile-friendly dark theme interface
+-  **Automatic Fallback** - Multiple format fallback chains ensure reliability
+-  **Zero Registration** - No account needed, completely free to use
+-  **Real-Time Format Information** - Shows available resolutions before download
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
 
@@ -43,7 +43,7 @@ npm start
 
 The application will be available at `http://localhost:3000`
 
-## 📖 Usage
+##  Usage
 
 ### Web Interface
 
@@ -64,7 +64,7 @@ The downloader supports various YouTube URL formats:
 - `https://www.youtube.com/embed/VIDEO_ID`
 - And other YouTube URL variations
 
-## 🛠️ Using Your Own YouTube API
+##  Using Your Own YouTube API
 
 This application uses **yt-dlp** (a fork of youtube-dl) as the primary downloader backend. If you want to replace the current API/backend with your own YouTube API, follow these steps:
 
@@ -205,7 +205,7 @@ require('dotenv').config();
 const apiKey = process.env.YOUTUBE_API_KEY;
 ```
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 youtube-downloader/
@@ -222,7 +222,7 @@ youtube-downloader/
 └── node_modules/            # Dependencies (created after npm install)
 ```
 
-## 🔧 Key Files to Modify for Custom API
+##  Key Files to Modify for Custom API
 
 | File | Section | Purpose |
 |------|---------|---------|
@@ -232,7 +232,7 @@ youtube-downloader/
 | `app.js` | `GET /download/audio` | Handle audio streaming |
 | `views/index.ejs` | Download buttons | UI for video/audio selection |
 
-## 🎯 API Integration Checklist
+##  API Integration Checklist
 
 - [ ] Choose your YouTube data source/API
 - [ ] Test API connectivity and authentication
@@ -245,7 +245,7 @@ youtube-downloader/
 - [ ] Update dependencies in package.json
 - [ ] Test mobile responsiveness
 
-## 📊 Available Formats
+##  Available Formats
 
 The application supports downloading in these video resolutions (when available):
 - **1080p** (Full HD) - Format ID: 96
@@ -263,7 +263,7 @@ Audio quality options (bitrate):
 - 96 kbps
 - And more depending on source
 
-## 🔒 Notes on Using APIs
+##  Notes on Using APIs
 
 ### Official YouTube Data API v3
 - **Pros:** Official, reliable, legal
@@ -283,14 +283,14 @@ Audio quality options (bitrate):
 - **License:** MIT
 - **Docs:** https://pytube.io/
 
-## ⚠️ Legal Disclaimer
+##  Legal Disclaimer
 
 - Ensure you have the right to download content from YouTube
 - Respect copyright and YouTube's Terms of Service
 - Only download content you own or have permission to download
 - This tool is for personal, non-commercial use
 
-## 🐛 Troubleshooting
+##  Troubleshooting
 
 ### Video/Audio won't download
 - Check that the YouTube URL is valid
@@ -321,29 +321,29 @@ lsof -ti:3000 | xargs kill -9
 PORT=3001 npm start
 ```
 
-## 📝 Logs
+##  Logs
 
 Server logs are saved to `/tmp/server.log`:
 ```bash
 tail -f /tmp/server.log
 ```
 
-## 🤝 Contributing
+##  Contributing
 
 Feel free to fork and submit pull requests for any improvements.
 
-## 📄 License
+##  License
 
 This project is provided as-is for educational purposes.
 
-## 🙏 Credits
+##  Credits
 
 - **Created by:** Richky Sung
 - **Backend:** Express.js, yt-dlp
 - **Frontend:** EJS, Tailwind CSS, Font Awesome Icons
 - **UI Inspiration:** Modern dark theme design
 
-## 📧 Support
+##  Support
 
 For issues or questions, please check:
 1. This README
@@ -352,7 +352,5 @@ For issues or questions, please check:
 4. GitHub Issues (if available)
 
 ---
-
-**Happy Downloading! 🎬🎵**
 
 Last Updated: December 15, 2025
