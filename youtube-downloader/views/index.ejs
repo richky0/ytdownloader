@@ -461,7 +461,7 @@
                 <% if (videoInfo) { %>
                     <div class="mt-6 sm:mt-8 animate-fade-scale">
                         <div class="flex flex-col md:flex-row gap-4 sm:gap-6 items-start bg-slate-800/30 rounded-lg sm:rounded-xl p-3 sm:p-5 border border-slate-700/50 video-info-container">
-                            <img src="<%= videoInfo.videoDetails.thumbnails[videoInfo.videoDetails.thumbnails.length-1].url %>" 
+                            <img src="<%= videoInfo.videoDetails.thumbnailUrl || (videoInfo.videoDetails.thumbnails && videoInfo.videoDetails.thumbnails.length ? videoInfo.videoDetails.thumbnails[videoInfo.videoDetails.thumbnails.length-1].url : '') %>" 
                                  alt="Video thumbnail" 
                                  class="w-full md:w-48 rounded-lg sm:rounded-xl shadow-md aspect-video object-cover video-thumbnail">
                             <div class="flex-1 w-full">
@@ -480,52 +480,94 @@
                         </div>
 
                         <div class="mt-4 sm:mt-6">
-                            <!-- Resolution Selection for Video -->
+                            <!-- ================= PERBAIKAN DI SINI =================
+                                 Sebelumnya loop menggunakan formats.combined, yang hanya
+                                 berisi format progresif mp4 (video+audio jadi satu file).
+                                 YouTube hanya menyediakan format progresif hingga 360p,
+                                 sehingga resolusi 720p/1080p/1440p tidak pernah muncul.
+
+                                 Sekarang loop menggunakan formats.resolutions, yang berisi
+                                 gabungan format combined + video-only (hingga resolusi
+                                 tertinggi yang tersedia). Setiap link tetap mengirim
+                                 mode=merged agar backend selalu menggabungkan video +
+                                 audio lewat ffmpeg saat resolusi di atas 360p dipilih.
+                            ================================================================ -->
                             <div class="mb-4">
-                                <h4 class="text-sm font-semibold text-white mb-2">📹 Download Video (Select Resolution):</h4>
-                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                                    <% if (formats && formats.combined && formats.combined.length > 0) { %>
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="text-sm font-semibold text-white">📹 Pilihan Resolusi Video</h4>
+                                    <span class="text-xs text-slate-400">Dengan suara • via FFmpeg</span>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <% if (formats && formats.resolutions && formats.resolutions.length > 0) { %>
+                                        <% formats.resolutions.slice(0, 9).forEach(format => { %>
+                                            <a href="/download?url=<%= encodeURIComponent(videoInfo.videoDetails.video_url) %>&itag=<%= format.itag %>&res=<%= format.height || '' %>&mode=merged"
+                                               class="group rounded-xl border border-emerald-500/20 bg-emerald-600/10 hover:bg-emerald-600/20 p-3 text-left transition-all duration-200">
+                                                <div class="flex items-center justify-between">
+                                                    <div>
+                                                        <div class="font-semibold text-white"><%= format.qualityLabel.replace(' (Video Only)', '') %></div>
+                                                        <div class="text-xs text-slate-400 mt-1"><%= format.size %></div>
+                                                    </div>
+                                                    <div class="text-emerald-400 group-hover:translate-x-1 transition-transform">
+                                                        <i class="fas fa-download"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="text-[11px] text-slate-400 mt-2">Video + suara otomatis saat diunduh</div>
+                                            </a>
+                                        <% }); %>
+                                    <% } else if (formats && formats.combined && formats.combined.length > 0) { %>
                                         <% formats.combined.slice(0, 9).forEach(format => { %>
-                                            <a href="/download/video?url=<%= encodeURIComponent(videoInfo.videoDetails.video_url) %>&fmt=<%= format.itag %>" 
-                                               class="px-3 py-2 bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm rounded-lg transition-colors duration-200 text-center font-medium">
-                                                <%= format.qualityLabel %><br><small><%= format.size %></small>
+                                            <a href="/download?url=<%= encodeURIComponent(videoInfo.videoDetails.video_url) %>&itag=<%= format.itag %>&res=<%= format.height || '' %>&mode=merged"
+                                               class="group rounded-xl border border-emerald-500/20 bg-emerald-600/10 hover:bg-emerald-600/20 p-3 text-left transition-all duration-200">
+                                                <div class="flex items-center justify-between">
+                                                    <div>
+                                                        <div class="font-semibold text-white"><%= format.qualityLabel %></div>
+                                                        <div class="text-xs text-slate-400 mt-1"><%= format.size %></div>
+                                                    </div>
+                                                    <div class="text-emerald-400 group-hover:translate-x-1 transition-transform">
+                                                        <i class="fas fa-download"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="text-[11px] text-slate-400 mt-2">Video + suara otomatis saat diunduh</div>
                                             </a>
                                         <% }); %>
                                     <% } else { %>
-                                        <a href="/download/video?url=<%= encodeURIComponent(videoInfo.videoDetails.video_url) %>" 
-                                           class="px-3 py-2 bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm rounded-lg transition-colors duration-200 text-center font-medium">
-                                            Best Video
+                                        <a href="/download?url=<%= encodeURIComponent(videoInfo.videoDetails.video_url) %>&mode=merged"
+                                           class="group rounded-xl border border-emerald-500/20 bg-emerald-600/10 hover:bg-emerald-600/20 p-3 text-left transition-all duration-200">
+                                            <div class="font-semibold text-white">Best Video</div>
+                                            <div class="text-[11px] text-slate-400 mt-2">Video + suara otomatis saat diunduh</div>
                                         </a>
                                     <% } %>
                                 </div>
                             </div>
 
-                            <!-- Resolution Selection for Audio -->
-                            <div class="mb-4">
-                                <h4 class="text-sm font-semibold text-white mb-2">🎵 Download Audio (Select Quality):</h4>
-                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                                    <% if (formats && formats.audio && formats.audio.length > 0) { %>
-                                        <% formats.audio.slice(0, 9).forEach(format => { %>
-                                            <a href="/download/audio?url=<%= encodeURIComponent(videoInfo.videoDetails.video_url) %>&fmt=<%= format.itag %>" 
-                                               class="px-3 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-xs sm:text-sm rounded-lg transition-colors duration-200 text-center font-medium">
-                                                <%= format.qualityLabel %><br><small><%= format.size %></small>
+                            <!-- Opsi audio saja (MP3/M4A) -->
+                            <% if (formats && formats.audio && formats.audio.length > 0) { %>
+                                <div class="mb-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h4 class="text-sm font-semibold text-white">🎵 Pilihan Audio Saja</h4>
+                                    </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                        <% formats.audio.slice(0, 6).forEach(format => { %>
+                                            <a href="/download?url=<%= encodeURIComponent(videoInfo.videoDetails.video_url) %>&itag=<%= format.itag %>&mode=direct"
+                                               class="group rounded-xl border border-indigo-500/20 bg-indigo-600/10 hover:bg-indigo-600/20 p-3 text-left transition-all duration-200">
+                                                <div class="flex items-center justify-between">
+                                                    <div>
+                                                        <div class="font-semibold text-white"><%= format.qualityLabel %></div>
+                                                        <div class="text-xs text-slate-400 mt-1"><%= format.size %></div>
+                                                    </div>
+                                                    <div class="text-indigo-400 group-hover:translate-x-1 transition-transform">
+                                                        <i class="fas fa-download"></i>
+                                                    </div>
+                                                </div>
                                             </a>
                                         <% }); %>
-                                    <% } else { %>
-                                        <a href="/download/audio?url=<%= encodeURIComponent(videoInfo.videoDetails.video_url) %>" 
-                                           class="px-3 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-xs sm:text-sm rounded-lg transition-colors duration-200 text-center font-medium">
-                                            Best Audio
-                                        </a>
-                                    <% } %>
+                                    </div>
                                 </div>
-                            </div>
+                            <% } %>
 
-                            <!-- Show Options Modal Button -->
-                            <div class="text-center pt-2">
-                                <button id="open-modal-btn" class="px-6 sm:px-8 py-2 sm:py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg sm:rounded-xl transition-all duration-200 inline-flex items-center touch-target">
-                                    <i class="fas fa-sliders-h mr-2 text-sm sm:text-base"></i>
-                                    <span class="text-sm sm:text-base" data-i18n="showOptions">Advanced Options</span>
-                                </button>
+                            <div class="rounded-xl border border-slate-700/60 bg-slate-800/30 p-3 text-sm text-slate-400">
+                                <i class="fas fa-info-circle mr-2 text-indigo-400"></i>
+                                Saat Anda klik resolusi tertentu, sistem akan menggabungkan video dan audio secara otomatis agar hasil unduhan tetap memiliki suara.
                             </div>
                         </div>
                     </div>
@@ -605,157 +647,6 @@
         </div>
     </div>
 
-    <!-- Download Options Modal -->
-    <div id="download-modal" class="modal">
-        <div class="modal-content">
-            <div class="sticky top-0 z-10 bg-slate-800/90 backdrop-blur-sm p-4 sm:p-6 border-b border-slate-700/50 flex justify-between items-center">
-                <h3 class="text-xl sm:text-2xl font-bold text-white flex items-center">
-                    <i class="fas fa-download mr-2 sm:mr-3 text-indigo-500"></i>
-                    <span data-i18n="downloadOptions">Download Options</span>
-                </h3>
-                <button id="close-modal-btn" class="text-slate-400 hover:text-white transition-colors touch-target">
-                    <i class="fas fa-times text-lg sm:text-xl"></i>
-                </button>
-            </div>
-            
-            <div class="p-4 sm:p-6">
-                <!-- Tabs Navigation -->
-                <div class="flex overflow-x-auto pb-2 mb-4 sm:mb-6 scrollbar-hide -mx-4 sm:mx-0 px-4 sm:px-0">
-                    <button data-tab="combined" class="tab-button flex-shrink-0 px-3 sm:px-4 py-1 sm:py-2 font-medium text-slate-400 hover:text-white active text-sm sm:text-base">
-                        <i class="fas fa-film mr-1 sm:mr-2"></i> <span data-i18n="videoAudio">Video + Audio</span>
-                    </button>
-                    <button data-tab="audio" class="tab-button flex-shrink-0 px-3 sm:px-4 py-1 sm:py-2 font-medium text-slate-400 hover:text-white text-sm sm:text-base">
-                        <i class="fas fa-music mr-1 sm:mr-2"></i> <span data-i18n="audioOnly">Audio Only</span>
-                    </button>
-                    <button data-tab="video" class="tab-button flex-shrink-0 px-3 sm:px-4 py-1 sm:py-2 font-medium text-slate-400 hover:text-white text-sm sm:text-base">
-                        <i class="fas fa-video mr-1 sm:mr-2"></i> <span data-i18n="videoOnly">Video Only</span>
-                    </button>
-                    <% if (formats && formats.videoHDR && formats.videoHDR.length > 0) { %>
-                    <button data-tab="hdr" class="tab-button flex-shrink-0 px-3 sm:px-4 py-1 sm:py-2 font-medium text-slate-400 hover:text-white text-sm sm:text-base">
-                        <i class="fas fa-sun mr-1 sm:mr-2"></i> <span data-i18n="hdrVideo">HDR Video</span>
-                    </button>
-                    <% } %>
-                </div>
-                
-                <!-- Tab Contents -->
-                <div class="space-y-6 sm:space-y-8">
-                    <!-- Combined Video+Audio Tab -->
-                    <div data-tab-content="combined" class="tab-content">
-                        <div class="space-y-3 sm:space-y-4">
-                            <h4 class="text-base sm:text-lg font-semibold text-white flex items-center">
-                                <i class="fas fa-film mr-1 sm:mr-2 text-indigo-400"></i>
-                                <span data-i18n="videoWithAudio">Video with Audio (MP4)</span>
-                            </h4>
-                            
-                            <% if (formats && formats.combined && formats.combined.length > 0) { %>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
-                                    <% formats.combined.forEach(format => { %>
-                                        <a href="/download?url=<%= encodeURIComponent(videoInfo.videoDetails.video_url) %>&itag=<%= format.itag %>"
-                                               class="download-option bg-slate-700/50 rounded-lg p-3 sm:p-4 flex justify-between items-center group touch-target">
-                                                <div>
-                                                    <div class="font-medium text-sm sm:text-base text-white group-hover:text-indigo-300"><%= format.qualityLabel %></div>
-                                                    <div class="text-xs text-slate-400 mt-0.5 sm:mt-1">MP4 • <%= format.contentLength ? (format.contentLength / (1024 * 1024)).toFixed(2) + ' MB' : 'Unknown size' %></div>
-                                                </div>
-                                                <i class="fas fa-download text-slate-500 group-hover:text-indigo-400 text-sm sm:text-base"></i>
-                                            </a>
-                                    <% }); %>
-                                </div>
-                            <% } else { %>
-                                <div class="bg-slate-800/30 rounded-lg p-3 sm:p-4 text-center text-slate-400 text-sm sm:text-base" data-i18n="noCombinedFormats">
-                                    No combined video+audio formats available
-                                </div>
-                            <% } %>
-                        </div>
-                    </div>
-                    
-                    <!-- Audio Only Tab -->
-                    <div data-tab-content="audio" class="tab-content hidden">
-                        <div class="space-y-3 sm:space-y-4">
-                            <h4 class="text-base sm:text-lg font-semibold text-white flex items-center">
-                                <i class="fas fa-music mr-1 sm:mr-2 text-indigo-400"></i>
-                                <span data-i18n="audioOnlyMP3">Audio Only (MP3)</span>
-                            </h4>
-                            
-                            <% if (formats && formats.audio && formats.audio.length > 0) { %>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
-                                    <% formats.audio.forEach(format => { %>
-                                        <a href="/download?url=<%= encodeURIComponent(videoInfo.videoDetails.video_url) %>&itag=<%= format.itag %>"
-                                           class="download-option bg-slate-700/50 rounded-lg p-3 sm:p-4 flex justify-between items-center group touch-target">
-                                            <div>
-                                                <div class="font-medium text-sm sm:text-base text-white group-hover:text-indigo-300">
-                                                    <%= format.audioBitrate ? Math.round(format.audioBitrate / 1000) : 'Unknown' %> <span data-i18n="kbpsAudio">kbps Audio</span>
-                                                </div>
-                                                <div class="text-xs text-slate-400 mt-0.5 sm:mt-1">MP3 • <%= format.contentLength ? (format.contentLength / (1024 * 1024)).toFixed(2) + ' MB' : 'Unknown size' %></div>
-                                            </div>
-                                            <i class="fas fa-download text-slate-500 group-hover:text-indigo-400 text-sm sm:text-base"></i>
-                                        </a>
-                                    <% }); %>
-                                </div>
-                            <% } else { %>
-                                <div class="bg-slate-800/30 rounded-lg p-3 sm:p-4 text-center text-slate-400 text-sm sm:text-base" data-i18n="noAudioFormats">
-                                    No audio-only formats available
-                                </div>
-                            <% } %>
-                        </div>
-                    </div>
-                    
-                    <!-- Video Only Tab -->
-                    <div data-tab-content="video" class="tab-content hidden">
-                        <div class="space-y-3 sm:space-y-4">
-                            <h4 class="text-base sm:text-lg font-semibold text-white flex items-center">
-                                <i class="fas fa-video mr-1 sm:mr-2 text-indigo-400"></i>
-                                <span data-i18n="videoOnlyMP4">Video Only (MP4)</span>
-                            </h4>
-                            
-                            <% if (formats && formats.video && formats.video.length > 0) { %>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
-                                    <% formats.video.forEach(format => { %>
-                                        <a href="/download?url=<%= encodeURIComponent(videoInfo.videoDetails.video_url) %>&itag=<%= format.itag %>"
-                                           class="download-option bg-slate-700/50 rounded-lg p-3 sm:p-4 flex justify-between items-center group touch-target">
-                                            <div>
-                                                <div class="font-medium text-sm sm:text-base text-white group-hover:text-indigo-300"><%= format.qualityLabel %></div>
-                                                <div class="text-xs text-slate-400 mt-0.5 sm:mt-1">MP4 • <%= format.contentLength ? (format.contentLength / (1024 * 1024)).toFixed(2) + ' MB' : 'Unknown size' %></div>
-                                            </div>
-                                            <i class="fas fa-download text-slate-500 group-hover:text-indigo-400 text-sm sm:text-base"></i>
-                                        </a>
-                                    <% }); %>
-                                </div>
-                            <% } else { %>
-                                <div class="bg-slate-800/30 rounded-lg p-3 sm:p-4 text-center text-slate-400 text-sm sm:text-base" data-i18n="noVideoFormats">
-                                    No video-only formats available
-                                </div>
-                            <% } %>
-                        </div>
-                    </div>
-                    
-                    <!-- HDR Video Tab -->
-                    <% if (formats && formats.videoHDR && formats.videoHDR.length > 0) { %>
-                    <div data-tab-content="hdr" class="tab-content hidden">
-                        <div class="space-y-3 sm:space-y-4">
-                            <h4 class="text-base sm:text-lg font-semibold text-white flex items-center">
-                                <i class="fas fa-sun mr-1 sm:mr-2 text-indigo-400"></i>
-                                <span data-i18n="hdrVideoMP4">HDR Video (MP4)</span>
-                            </h4>
-                            
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
-                                <% formats.videoHDR.forEach(format => { %>
-                                                                        <a href="/download?url=<%= encodeURIComponent(videoInfo.videoDetails.video_url) %>&itag=<%= format.itag %>"
-                                                                             class="download-option bg-slate-700/50 rounded-lg p-3 sm:p-4 flex justify-between items-center group touch-target">
-                                                                                 <div>
-                                                                                         <div class="font-medium text-sm sm:text-base text-white group-hover:text-indigo-300"><%= format.qualityLabel %></div>
-                                                                                        <div class="text-xs text-slate-400 mt-0.5 sm:mt-1">HDR MP4 • <%= format.contentLength ? (format.contentLength / (1024 * 1024)).toFixed(2) + ' MB' : 'Unknown size' %></div>
-                                                                                 </div>
-                                                                                 <i class="fas fa-download text-slate-500 group-hover:text-indigo-400 text-sm sm:text-base"></i>
-                                                                         </a>
-                                <% }); %>
-                            </div>
-                        </div>
-                    </div>
-                    <% } %>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Add flag icons CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
@@ -767,11 +658,6 @@
         const btnText = document.getElementById('btn-text');
         const btnSpinner = document.getElementById('btn-spinner');
         const loadingSpinner = document.getElementById('loading-spinner');
-        const modal = document.getElementById('download-modal');
-        const openModalBtn = document.getElementById('open-modal-btn');
-        const closeModalBtn = document.getElementById('close-modal-btn');
-        const tabButtons = document.querySelectorAll('[data-tab]');
-        const tabContents = document.querySelectorAll('[data-tab-content]');
         const faqItems = document.querySelectorAll('.bg-slate-800\\/30.rounded-xl h3');
         const themeToggle = document.getElementById('theme-toggle');
         const themeIcon = document.getElementById('theme-icon');
@@ -1060,9 +946,8 @@
             }
         });
 
-        // Pastikan modal tertutup saat pertama kali load
+        // Inisialisasi halaman
         document.addEventListener('DOMContentLoaded', () => {
-            modal.classList.remove('active');
             document.body.style.overflow = '';
             document.documentElement.style.overflow = '';
             initPage();
@@ -1071,6 +956,16 @@
         // Form submission handler
         if (form) {
             form.addEventListener('submit', (e) => {
+                const urlValue = document.getElementById('url-input').value.trim();
+                if (!urlValue) {
+                    e.preventDefault();
+                    const input = document.getElementById('url-input');
+                    input.focus();
+                    input.classList.add('border-rose-500');
+                    input.setAttribute('placeholder', 'Please enter a valid YouTube URL');
+                    return;
+                }
+
                 btnText.textContent = document.querySelector('[data-i18n="processing"]').textContent;
                 btnSpinner.classList.remove('hidden');
                 submitBtn.disabled = true;
@@ -1078,40 +973,15 @@
             });
         }
 
-        // Modal functionality - hanya buka ketika tombol diklik
-        if (openModalBtn) {
-            openModalBtn.addEventListener('click', () => {
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-                document.documentElement.style.overflow = 'hidden';
+        const urlInput = document.getElementById('url-input');
+        if (urlInput) {
+            urlInput.addEventListener('input', () => {
+                urlInput.classList.remove('border-rose-500');
+                if (urlInput.getAttribute('placeholder') === 'Please enter a valid YouTube URL') {
+                    urlInput.setAttribute('placeholder', 'Paste YouTube URL here (e.g. https://youtube.com/watch?v=...)');
+                }
             });
         }
-
-        if (closeModalBtn) {
-            closeModalBtn.addEventListener('click', () => {
-                modal.classList.remove('active');
-                document.body.style.overflow = '';
-                document.documentElement.style.overflow = '';
-            });
-        }
-
-        // Tab switching functionality
-        tabButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                // Update active tab button
-                tabButtons.forEach(btn => btn.classList.remove('active', 'text-indigo-400'));
-                button.classList.add('active', 'text-indigo-400');
-                
-                // Show corresponding tab content
-                const tabName = button.getAttribute('data-tab');
-                tabContents.forEach(content => {
-                    content.classList.add('hidden');
-                    if (content.getAttribute('data-tab-content') === tabName) {
-                        content.classList.remove('hidden');
-                    }
-                });
-            });
-        });
 
         // FAQ accordion functionality
         faqItems.forEach(item => {
@@ -1131,23 +1001,6 @@
             });
         });
 
-        // Close modal when clicking outside
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.classList.remove('active');
-                document.body.style.overflow = '';
-                document.documentElement.style.overflow = '';
-            }
-        });
-
-        // Close modal with Escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && modal.classList.contains('active')) {
-                modal.classList.remove('active');
-                document.body.style.overflow = '';
-                document.documentElement.style.overflow = '';
-            }
-        });
 
         // Initialize FAQ answers
         document.querySelectorAll('.bg-slate-800\\/30.rounded-xl p').forEach(answer => {
