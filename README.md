@@ -1,4 +1,4 @@
-# YouTube Downloader
+# Gettube
 
 A fast, free, and unlimited YouTube video and audio downloader built with Node.js and Express.js. Download videos in multiple resolutions (up to 1080p) and extract audio in various quality options.
 
