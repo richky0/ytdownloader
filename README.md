@@ -353,4 +353,4 @@ For issues or questions, please check:
 
 ---
 
-Last Updated: December 15, 2025
+Last Updated: July 12, 2026
